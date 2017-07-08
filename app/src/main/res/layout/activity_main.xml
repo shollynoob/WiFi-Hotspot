@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/heading"
+        android:textColor="#fff"
+        android:textStyle="bold" />
+
+    <EditText
+        android:gravity="center"
+        android:id="@+id/edittext"
+        android:layout_width="250dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/heading"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/row_bg" />
+
+    <Button
+        android:id="@+id/enableWifiHotSpotId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edittext"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="@string/enable"
+        android:textColor="#000" />
+
+    <Button
+        android:id="@+id/disableWifiHotspotId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/enableWifiHotSpotId"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/disable"
+        android:textColor="#000" />
+
+    <Button
+        android:id="@+id/checkstate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/disableWifiHotspotId"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Check state"
+        android:textColor="#000" />
+
+    <TextView
+        android:id="@+id/hotspotstate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/checkstate"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:hint="Check Hotspot State"
+        android:textColor="#FFF"
+        android:textColorHint="#FFF" />
+
+</RelativeLayout>
