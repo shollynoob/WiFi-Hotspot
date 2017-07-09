@@ -16,7 +16,7 @@
         jumboMode="true"
         optimize="true"
         revision="26.0.0"
-        sha1="6d88fd395dc02fd8850ee8435321e8f35311c80a">
+        sha1="62c23849d4b4c1c67eb4737de06c507bc25b7587">
         <dex dex="C:\Hotspot\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_c2a6d36d9e2c5b5ce06863188e14f342fdbc8684\classes.dex" />
     </item>
 
