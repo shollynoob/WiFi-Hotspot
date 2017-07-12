@@ -1,4 +1,4 @@
-#Wed Jul 12 15:45:07 IST 2017
+#Wed Jul 12 18:32:52 IST 2017
 base.0=C\:\\Hotspot\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_2c5439ca9c3acd7f58f69f658538bf40db65c48e
 renamed.1=classes.dex
 renamed.0=classes2.dex

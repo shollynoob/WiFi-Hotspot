@@ -1,4 +1,4 @@
-#Tue Jul 11 18:27:16 IST 2017
+#Wed Jul 12 18:32:51 IST 2017
 file.2=C\:\\Hotspot\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\classes_577fe44b6eb02d9f8b8bdaca4eb18a76e38f8a0f\\classes.dex
 base.2=C\:\\Hotspot\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\classes_577fe44b6eb02d9f8b8bdaca4eb18a76e38f8a0f
 file.1=C\:\\Hotspot\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\classes_9ea80458ece07be010f32c8c3c3011de611db68a\\classes.dex

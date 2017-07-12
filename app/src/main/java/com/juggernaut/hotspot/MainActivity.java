@@ -64,7 +64,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-
     public void writePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.System.canWrite(getApplicationContext())) {

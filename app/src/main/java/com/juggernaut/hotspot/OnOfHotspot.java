@@ -71,12 +71,12 @@ public class OnOfHotspot {
                     netConfig.preSharedKey = password;
                 }
 
-
                 Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
                 method.invoke(wifimanager, netConfig, apState);
 
                 Toast.makeText(context, "WiFi Hotspot is Created!", Toast.LENGTH_SHORT).show();
                 return true;
+
             } else {
                 Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
                 method.invoke(wifimanager, config, false);
@@ -93,6 +93,7 @@ public class OnOfHotspot {
 
         WifiConfiguration config = null;
         WifiManager wifimanager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
         Method[] methods = wifimanager.getClass().getDeclaredMethods();
         for (Method m : methods) {
             if (m.getName().equals("getWifiApConfiguration")) {
