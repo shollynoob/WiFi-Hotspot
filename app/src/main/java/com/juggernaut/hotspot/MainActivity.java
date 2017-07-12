@@ -1,45 +1,31 @@
 package com.juggernaut.hotspot;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
+import android.support.design.widget.TextInputLayout;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static android.content.ContentValues.TAG;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-
+import static com.juggernaut.hotspot.OnOfHotspot.spin;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    public static String hotspotName = null;
-    Button enableHotspot;
-    Button disableHotspot;
-    TextView textView;
-    Boolean aBoolean;
-    Button state;
-    EditText editText;
+    public EditText hotspotNameText;
+    public Button enableHotspot;
+    public EditText passwordText;
+    public TextView status;
+    public Boolean aBoolean;
+    public Spinner spinner;
+    public TextInputLayout textInputLayout;
 
 
     @Override
@@ -47,65 +33,116 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        enableHotspot = (Button) findViewById(R.id.enableWifiHotSpotId);
+        enableHotspot = (Button) findViewById(R.id.enableHotspot);
         enableHotspot.setOnClickListener(this);
 
-        editText = (EditText) findViewById(R.id.edittext);
+        hotspotNameText = (EditText) findViewById(R.id.hotspotName);
+        passwordText = (EditText) findViewById(R.id.passwordId);
 
-        textView = (TextView) findViewById(R.id.hotspotstate);
+        status = (TextView) findViewById(R.id.status);
 
-        state = (Button) findViewById(R.id.checkstate);
-        state.setOnClickListener(this);
+        aBoolean = OnOfHotspot.isApOn(this);
 
-        disableHotspot = (Button) findViewById(R.id.disableWifiHotspotId);
-        disableHotspot.setOnClickListener(this);
+        if (aBoolean) {
+            enableHotspot.setText("DISABLE");
+            status.setText("WiFi Hotspot is ON!");
+        } else {
+            enableHotspot.setText("ENABLE");
+            status.setText("WiFi Hotspot is OFF!");
+        }
+
+        textInputLayout = (TextInputLayout) findViewById(R.id.jugger);
+
+        spinner = (Spinner) findViewById(R.id.spinner);
+        String[] encryption = {"Open", "WPA-PSK"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, encryption);
+        spinner.setAdapter(adapter);
+
+        passwordText.setText("12345678");
+        hotspotNameText.setText("Wi-Fi Hotspot");
+        writePermission();
 
     }
+
+
     public void writePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.System.canWrite(getApplicationContext())) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + getPackageName()));
                 startActivityForResult(intent, 200);
-
             }
         }
     }
 
     @Override
+    protected void onStart() {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if ("WPA-PSK".equals(spinner.getSelectedItem().toString().toUpperCase())) {
+                    spin = 1;
+                    textInputLayout.setVisibility(View.VISIBLE);
+                    passwordText.setVisibility(View.VISIBLE);
+
+                } else if ("OPEN".equals(spinner.getSelectedItem().toString().toUpperCase())) {
+                    spin = 0;
+                    textInputLayout.setVisibility(View.INVISIBLE);
+                    passwordText.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        super.onStart();
+    }
+
+    @Override
     public void onClick(View v) {
-        writePermission();
-        switch (v.getId()) {
-            case R.id.enableWifiHotSpotId:
-                try {
-                    if (!((editText.getText().toString()).equals(""))) {
-                        hotspotName = editText.getText().toString();
+
+
+        Button toggle = (Button) v;
+        String buttonText = toggle.getText().toString();
+        if (buttonText.equals("DISABLE")) {
+
+            try {
+                OnOfHotspot.getApConfiguration(this);
+                OnOfHotspot.configApState(this, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            toggle.setText("ENABLE");
+            status.setText("WiFi Hotspot is OFF!");
+
+        } else if (buttonText.equals("ENABLE")) {
+            try {
+                if (!((hotspotNameText.getText().toString()).equals(""))) {
+                    String password = passwordText.getText().toString();
+                    if (!(password.isEmpty() || password.length() < 8 || password.length() > 15)) {
+
+                        OnOfHotspot.hotspotName = hotspotNameText.getText().toString();
+                        OnOfHotspot.password = passwordText.getText().toString();
                         OnOfHotspot.getApConfiguration(this);
                         OnOfHotspot.configApState(this, true);
+
+                        toggle.setText("DISABLE");
+                        status.setText("WiFi Hotspot is ON!");
                     } else {
-                        Toast.makeText(getApplicationContext(), "Please Specify Hotspot name!", Toast.LENGTH_LONG).show();
+                        passwordText.setError("between 8 and 15 characters");
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            case R.id.disableWifiHotspotId:
-                try {
-                    OnOfHotspot.getApConfiguration(this);
-                    OnOfHotspot.configApState(this, false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            case R.id.checkstate:
-                aBoolean = OnOfHotspot.isApOn(this);
-                if (aBoolean) {
-                    textView.setText("WiFi Hotspot already ON!");
                 } else {
-                    textView.setText("WiFi Hotspot is OFF!");
+                    hotspotNameText.setError("Please Specify Hotspot name!");
                 }
-                break;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

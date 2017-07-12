@@ -3,13 +3,11 @@ package com.juggernaut.hotspot;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static com.juggernaut.hotspot.MainActivity.hotspotName;
 
 /**
  * Created by Kailash on 7/8/2017.
@@ -18,8 +16,9 @@ import static com.juggernaut.hotspot.MainActivity.hotspotName;
 public class OnOfHotspot {
 
     public static WifiConfiguration config;
-
-
+    public static String hotspotName;
+    public static String password;
+    public static int spin;
     //check whether wifi hotspot on or off
 
     public static boolean isApOn(Context context) {
@@ -42,16 +41,44 @@ public class OnOfHotspot {
             if (apState) {
                 WifiConfiguration netConfig = new WifiConfiguration();
 
-                netConfig.SSID = MainActivity.hotspotName;
-                netConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                netConfig.SSID = hotspotName;
+                netConfig.status = WifiConfiguration.Status.DISABLED;
+                netConfig.priority = 40;
 
-                Method method = WifiManager.class.getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+                if (spin == 0) {
+                    netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+                    netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+                    netConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+                    netConfig.allowedAuthAlgorithms.clear();
+                    netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+                    netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+                } else if (spin == 1) {
+
+                    netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+                    netConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+                    netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+                    netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+                    netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+
+                    netConfig.preSharedKey = password;
+                }
+
+
+                Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
                 method.invoke(wifimanager, netConfig, apState);
+
                 Toast.makeText(context, "WiFi Hotspot is Created!", Toast.LENGTH_SHORT).show();
                 return true;
             } else {
-
-                Method method = WifiManager.class.getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+                Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
                 method.invoke(wifimanager, config, false);
                 Toast.makeText(context, "WiFi Hotspot is Disabled!", Toast.LENGTH_SHORT).show();
                 return true;
@@ -66,18 +93,17 @@ public class OnOfHotspot {
 
         WifiConfiguration config = null;
         WifiManager wifimanager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        Method[] methods = WifiManager.class.getDeclaredMethods();
+        Method[] methods = wifimanager.getClass().getDeclaredMethods();
         for (Method m : methods) {
             if (m.getName().equals("getWifiApConfiguration")) {
                 try {
                     config = (WifiConfiguration) m.invoke(wifimanager);
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    Log.d("Testing", e.getCause().toString());
+                    e.printStackTrace();
                 }
             }
         }
         OnOfHotspot.config = config;
         return config;
     }
-
 }
